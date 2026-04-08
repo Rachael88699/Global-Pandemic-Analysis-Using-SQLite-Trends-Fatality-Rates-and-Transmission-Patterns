@@ -1,0 +1,1 @@
+# Global-Pandemic-Analysis-Using-SQLite-Trends-Fatality-Rates-and-Transmission-Patterns
