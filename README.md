@@ -1,28 +1,35 @@
 #  Global Pandemic Analysis Using SQLite
 
-##  Introduction
-Pandemics have significantly shaped human history through widespread health, economic, and social impacts.  
-This project analyzes a dataset of historical pandemics using **SQLite** to uncover patterns in transmission, fatality rates, geographic spread, and duration.
+##  Project Overview
+This project analyzes historical pandemic data using **SQLite** to uncover trends in mortality, transmission, geographic spread, and economic impact.
 
-The goal is to transform raw data into meaningful insights using structured queries.
+##  Introduction
+Pandemics have shaped human history through their impact on populations, economies, and healthcare systems.
+
+This project explores pandemic data to identify patterns in:
+- Fatality rates  
+- Transmission methods  
+- Geographic distribution  
+- Duration and spread  
 
 ---
 
-##  About the Dataset
-The dataset contains records of major pandemics across different time periods, including:
+## 📊 About the Dataset
+The dataset contains records of major pandemics across different time periods.
 
+### Key Features:
 - Event Name  
 - Pathogen Type  
-- Start and End Years  
+- Start & End Year  
 - Duration  
 - Origin Region  
-- Geographic Spread  
-- Estimated Cases and Deaths  
+- Estimated Cases & Deaths  
 - Case Fatality Rate  
-- Transmission Methods  
-- Containment Measures  
+- Transmission Method  
+- Containment Strategy  
 - Economic Impact  
-- Spread Score
+- Spread Score  
+- Century
 - era
 
  **Dataset Source:**  
@@ -30,25 +37,42 @@ https://1drv.ms/x/c/f729756d9dbf5534/IQDytaZSbLKLTbvg7lv35gGOAUDDTbw6Lr7UV4koQ7y
 
 ---
 
-## Problem Statement
-Despite the availability of historical pandemic data, it is often not fully analyzed to extract actionable insights.
+##  Problem Statement
+Despite the availability of pandemic data, it is often not fully utilized to generate actionable insights.
 
 This project answers key questions such as:
-- Which pandemics were the most deadly?
-- What pathogen types are most common?
-- How do transmission methods affect spread?
-- Which regions are most affected?
-- What factors influence fatality rates?
+- Which pandemics were the most deadly?  
+- What pathogen types are most common?  
+- How do transmission methods influence spread?  
+- Which regions are most affected?  
+- What factors drive fatality rates?  
 
 ---
 
-##  Tools Used
-- **SQLite** – Data storage and querying  
-- **DB Browser for SQLite** – Query execution and data exploration  
-- **Excel / CSV** – Data source  
-- **GitHub** – Documentation and version control  
+##  Objectives
+- Analyze pandemic severity using mortality data  
+- Identify dominant pathogen types  
+- Examine transmission and containment patterns  
+- Explore geographic and time-based trends  
 
 ---
+
+##  Tools & Technologies
+- SQLite  
+- DB Browser for SQLite  
+- Excel / CSV  
+- GitHub  
+
+---
+
+## 🧹 Data Cleaning & Preparation
+- Imported CSV dataset into SQLite  
+- Resolved column naming inconsistencies  
+- Renamed truncated columns  
+- Converted numeric values using SQL functions  
+- Ensured data consistency for analysis
+
+  ---
 
 ##  Visualization (Dashboard)
 The project uses a **tabular dashboard (SQLite table screenshot)** to display:
@@ -70,115 +94,53 @@ The project uses a **tabular dashboard (SQLite table screenshot)** to display:
 
 ---
 
-##  SQL Analysis Queries
+##  SQL Analysis
+SQL queries used in this project are stored in:
 
-### 1. Most Deadly Pandemics
-```sql
-SELECT event_name, 
-       CAST(Case_Fatality_Rate_Pct AS REAL) AS fatality_rate
-FROM raw_data
-ORDER BY fatality_rate DESC;
-LIMIT 10;
+ **`queries.sql`**
 
-### 2. Number Of Pandemics Per Century
-```sql
-SELECT century, COUNT(*) AS number_of_events
-FROM raw_data
-GROUP BY century
-ORDER BY number_of_events DESC;
+The queries cover:
+- Deadliest pandemics  
+- Fatality rate analysis  
+- Transmission patterns  
+- Geographic distribution  
+- Economic impact  
+- Time-based analysis  
 
-### 3. Distribution Of Pathogen Types
-```sql
-SELECT pathogen_type, COUNT(*) AS number_of_events
-FROM raw_data
-GROUP BY pathogen_type
-ORDER BY number_of_events DESC;
+---
 
-###  3. Transmission Method Analysis
-```sql
-SELECT primary_transmis, COUNT(*) AS number_of_events
-FROM raw_data
-GROUP BY primary_transmis
-ORDER BY number_of_events DESC;
+##  Key Insights
+- Certain pandemics recorded extremely high fatality rates  
+- Viral diseases are the most common cause of pandemics  
+- Airborne transmission contributes to rapid spread  
+- Some regions appear repeatedly as outbreak origins  
+- High spread does not always result in high mortality  
+- Duration does not always determine severity  
 
-### 4. Containment Method Analysis
-```sql
-SELECT containment_meth, COUNT(*) AS number_of_events
-FROM raw_data
-GROUP BY containment_meth
-ORDER BY number_of_events DESC;
+---
 
-### 5. Longest Pandemics
-```sql
-SELECT event_name, duration_years
-FROM raw_data
-ORDER BY duration_years DESC;
+##  Recommendations
+- Strengthen early detection systems  
+- Focus on high-risk transmission methods  
+- Improve global health collaboration  
+- Invest in healthcare infrastructure  
+- Maintain clean and structured data for analysis  
 
-### 6.Average Fatality Rate by Pathogen Type 
-```sql
-SELECT pathogen_type,
-       COUNT(*) AS number_of_events,
-       AVG(CAST(Case_Fatality_Rate_Pct AS REAL)) AS avg_fatality_rate
-FROM raw_data
-GROUP BY pathogen_type
-ORDER BY avg_fatality_rate DESC;
-
-## 7. Spread Vs Death Comparison
-```sql
-SELECT event_name, spread_score, estimated_deaths
-FROM raw_data
-ORDER BY spread_score DESC;
-
-## 8. Origin Region Distribution
-```sql
-SELECT origin_region, COUNT(*) AS number_of_events
-FROM raw_data
-GROUP BY origin_region
-ORDER BY number_of_events DESC;
-
-## 9. Economic Impact Ranking
-```sql
-SELECT event_name, CAST(economic_impact_b AS REAL) AS economic_impact
-FROM raw_data
-ORDER BY economic_impact DESC;
-
-## 10. Events Per Year (Time Analysis)
-```sql
-WITH RECURSIVE years(year) AS (
-    SELECT MIN(start_year) FROM raw_data
-    UNION ALL
-    SELECT year + 1 FROM years
-    WHERE year < (SELECT MAX(end_year) FROM raw_data)
-)
-SELECT y.year,
-       COUNT(r.event_name) AS number_of_events
-FROM years y
-LEFT JOIN raw_data r
-ON y.year BETWEEN r.start_year AND COALESCE(r.end_year, r.start_year)
-GROUP BY y.year
-ORDER BY y.year;
-
-## Key Insights
-Pandemics with high fatality rates are often associated with specific pathogen types
-Viral diseases are the most frequent cause of pandemics
-Airborne transmission leads to rapid and wide spread
-Some regions repeatedly appear as origins of outbreaks
-Spread rate does not always correlate with death rate
-Longer pandemics are not necessarily the deadliest
-
-## Recommendations
---Strengthen early detection and surveillance systems
---Prioritize control of airborne diseases
---Improve global health collaboration
---Invest in healthcare infrastructure
---Maintain clean and standardized datasets for analysis
+---
 
 ## Conclusion
-This project demonstrates how SQL can be used to analyze real-world datasets and generate meaningful insights.
-By exploring pandemic trends, we gain valuable knowledge that can support better decision-making in global health.
+This project demonstrates how SQL can be used to extract meaningful insights from real-world datasets.
+
+Understanding pandemic patterns can support better preparedness and response strategies.
+
+---
 
 ## Future Improvements
---Add visual dashboards (Power BI / Tableau)
---Include real-time pandemic data
---Build an interactive web-based dashboard
---Expand analysis with machine learning models
+- Add data visualizations (charts)  
+- Build an interactive dashboard  
+- Expand dataset with recent data  
+- Integrate advanced analytics  
+
+---
+##  Author
+-Ukatta Chinasa Rachael
